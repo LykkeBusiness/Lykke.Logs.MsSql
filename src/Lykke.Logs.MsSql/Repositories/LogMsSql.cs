@@ -21,7 +21,7 @@ namespace Lykke.Logs.MsSql
                                                  "[Version] [nvarchar] (256) NULL, " +
                                                  "[Component] [nvarchar] (1024) NULL, " +
                                                  "[Process] [nvarchar] (1024) NOT NULL, " +
-                                                 "[Context] [nvarchar] (MAX) NOT NULL, " +
+                                                 "[Context] [nvarchar] (MAX) NULL, " +
                                                  "[Type] [nvarchar] (1024) NOT NULL, " +
                                                  "[Stack] [nvarchar] (MAX) NULL, " +
                                                  "[Msg] [nvarchar] (MAX) NULL " +
