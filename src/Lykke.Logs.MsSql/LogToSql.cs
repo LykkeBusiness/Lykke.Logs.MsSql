@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using Autofac.Util;
 using Common.Log;
 using Microsoft.Extensions.PlatformAbstractions;
 using Lykke.Logs.MsSql;
-using Lykke.Logs.MsSql.Domain;
+using Microsoft.Extensions.Logging;
+using LogLevel = Lykke.Logs.MsSql.Domain.LogLevel;
+using Lykke.Common.Log;
 
 namespace Lykke.Logs.MsSql
 {
@@ -125,6 +129,23 @@ namespace Lykke.Logs.MsSql
             }
 
             return str;
+        }
+
+        public void Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter) where TState : LogEntryParameters
+        {
+            WriteLog(LogLevel.Info, null, null, null, null, exception, DateTime.Now);
+        }
+
+        public bool IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel)
+        {
+            return true;
+        }
+
+        public IDisposable BeginScope(string scopeMessage)
+        {
+            var d = new Disposable();
+            d.Dispose();
+            return d;
         }
     }
 }
