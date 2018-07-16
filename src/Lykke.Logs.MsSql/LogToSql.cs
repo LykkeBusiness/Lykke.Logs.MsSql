@@ -39,6 +39,11 @@ namespace Lykke.Logs.MsSql
             await _logRepository.Insert(log);
         }
 
+        public async Task Log(string component, string process, string context, string info, DateTime? dateTime = null)
+        {
+            await WriteLog(LogLevel.Info, component, process, context, info, null, dateTime);
+        }
+
         public async Task WriteInfoAsync(string component, string process, string context, string info, DateTime? dateTime = null)
         {
             await WriteLog(LogLevel.Info, component, process, context, info, null, dateTime);
