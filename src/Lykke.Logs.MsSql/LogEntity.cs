@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Lykke.Logs.MsSql.Interfaces;
 
 namespace Lykke.Logs.MsSql
 {
-    public class LogObject : ILogObject
+    public class LogEntity : ILogEntity
     {
         public DateTime DateTime { get; set; }
         public string Level { get; set; }

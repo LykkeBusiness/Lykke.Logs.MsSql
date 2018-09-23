@@ -1,50 +1,51 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
+using JetBrains.Annotations;
 using Lykke.Logs.MsSql.Extensions;
+using Lykke.Logs.MsSql.Interfaces;
 
-namespace Lykke.Logs.MsSql
+namespace Lykke.Logs.MsSql.Repositories
 {
-    public class LogMsSql : ILogMsSql
+    [UsedImplicitly]
+    public class SqlLogRepository : ILogRepository
     {
         private readonly string _tableName;
         private const string CreateTableScript = "CREATE TABLE [{0}](" +
                                                  "[Id] [bigint] NOT NULL IDENTITY(1,1) PRIMARY KEY," +
-                                                 "[DateTime] [DateTime] NOT NULL," +
-                                                 "[Level] [nvarchar] (64) NOT NULL, " +
+                                                 "[DateTime] [DateTime] NULL," +
+                                                 "[Level] [nvarchar] (64) NULL, " +
                                                  "[Env] [nvarchar] (64) NULL, " +
                                                  "[AppName] [nvarchar] (256) NULL, " +
                                                  "[Version] [nvarchar] (256) NULL, " +
-                                                 "[Component] [nvarchar] (1024) NULL, " +
-                                                 "[Process] [nvarchar] (1024) NOT NULL, " +
-                                                 "[Context] [nvarchar] (MAX) NULL, " +
-                                                 "[Type] [nvarchar] (1024) NOT NULL, " +
-                                                 "[Stack] [nvarchar] (MAX) NULL, " +
-                                                 "[Msg] [nvarchar] (MAX) NULL " +
+                                                 "[Component] [nvarchar] (max) NULL, " +
+                                                 "[Process] [nvarchar] (max) NULL, " +
+                                                 "[Context] [nvarchar] (max) NULL, " +
+                                                 "[Type] [nvarchar] (max) NULL, " +
+                                                 "[Stack] [nvarchar] (max) NULL, " +
+                                                 "[Msg] [nvarchar] (max) NULL " +
                                                  ");";
-
-        private static Type DataType => typeof(ILogObject);
-        private static readonly string GetColumns = "[" + string.Join("],[", DataType.GetProperties().Select(x => x.Name)) + "]";
+        
+        private static Type DataType => typeof(ILogEntity);
+        private static readonly string GetColumns = string.Join(",", DataType.GetProperties().Select(x => x.Name));
         private static readonly string GetFields = string.Join(",", DataType.GetProperties().Select(x => "@" + x.Name));
-
+     
         private readonly string _connectionString;
-
-        public LogMsSql(string logTableName, string connectionString)
+        
+        public SqlLogRepository(string logTableName, string connectionString)
         {
             _tableName = logTableName;
             _connectionString = connectionString;
-
+            
             using (var conn = new SqlConnection(_connectionString))
             {
                 conn.CreateTableIfDoesntExists(CreateTableScript, _tableName);
             }
         }
-
-        public async Task Insert(ILogObject log)
+        
+        public async Task Insert(ILogEntity log)
         {
             using (var conn = new SqlConnection(_connectionString))
             {
@@ -52,6 +53,5 @@ namespace Lykke.Logs.MsSql
                     $"insert into {_tableName} ({GetColumns}) values ({GetFields})", log);
             }
         }
-
     }
 }
