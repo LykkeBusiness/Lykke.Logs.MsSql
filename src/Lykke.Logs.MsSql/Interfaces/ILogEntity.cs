@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Lykke.Logs.MsSql
+namespace Lykke.Logs.MsSql.Interfaces
 {
-    public interface ILogObject
+    public interface ILogEntity
     {
         DateTime DateTime { get; }
         string Level { get; }
