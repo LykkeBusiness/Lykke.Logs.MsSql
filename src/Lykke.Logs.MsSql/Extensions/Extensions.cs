@@ -26,7 +26,8 @@ namespace Lykke.Logs.MsSql.Extensions
                     fullTableName = $"{schemaName}.{fullTableName}";
                     
                     if (1 != connection.ExecuteScalar<int>(
-                            $"SELECT 1 FROM information_schema.schemata WHERE schema_name = {schemaName}"))
+                            "SELECT 1 FROM information_schema.schemata WHERE schema_name = @schemaName", 
+                            new {schemaName}))
                     {
                         // Create schema
                         var query = $"CREATE SCHEMA {schemaName} AUTHORIZATION dbo";
