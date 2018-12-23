@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Autofac.Util;
+using Common;
 using Common.Log;
 using JetBrains.Annotations;
+using Lykke.Common.Log;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Extensions.Logging;
 using LogLevel = Lykke.Logs.MsSql.Domain.LogLevel;
@@ -11,6 +13,7 @@ using Lykke.Logs.MsSql.Interfaces;
 namespace Lykke.Logs.MsSql
 {
     [UsedImplicitly]
+    //TODO: to refactor and use new logs mechanism
     public class LogToSql : ILog
     {
         private readonly ILogRepository _logRepository;
@@ -48,7 +51,53 @@ namespace Lykke.Logs.MsSql
 
             return Task.CompletedTask;
         }
-        
+
+        public void Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter) where TState : LogEntryParameters
+        {
+            WriteLog(Map(logLevel), "", "", state.ToJson(), formatter(state, exception), exception);
+        }
+
+        private LogLevel Map(Microsoft.Extensions.Logging.LogLevel logLevel)
+        {
+            switch (logLevel)
+            {
+                case Microsoft.Extensions.Logging.LogLevel.Debug:
+                case Microsoft.Extensions.Logging.LogLevel.Trace:
+                case Microsoft.Extensions.Logging.LogLevel.Information:
+                    return LogLevel.Info;
+                
+                case Microsoft.Extensions.Logging.LogLevel.Warning:
+                    return LogLevel.Warning;
+                
+                case Microsoft.Extensions.Logging.LogLevel.Error:
+                    return LogLevel.Error;
+                
+                case Microsoft.Extensions.Logging.LogLevel.Critical:
+                    return LogLevel.FatalError;
+                
+                default:
+                    return LogLevel.None;
+            }
+        }
+
+        public bool IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel)
+        {
+            return true;
+        }
+
+        public IDisposable BeginScope(string scopeMessage)
+        {
+            return new DummyDisposableObject();
+        }
+
+        private class DummyDisposableObject : IDisposable
+        {
+            public void Dispose()
+            {
+                
+            }
+        }
+
         public async Task WriteInfoAsync(string component, string process, string context, string info, DateTime? dateTime = null)
         {
             await WriteLog(LogLevel.Info, component, process, context, info, null, dateTime);
