@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Autofac.Util;
 using Common;
 using Common.Log;
 using JetBrains.Annotations;
