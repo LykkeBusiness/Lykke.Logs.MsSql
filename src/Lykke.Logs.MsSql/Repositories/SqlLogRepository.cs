@@ -3,13 +3,11 @@ using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
-using JetBrains.Annotations;
 using Lykke.Logs.MsSql.Extensions;
 using Lykke.Logs.MsSql.Interfaces;
 
 namespace Lykke.Logs.MsSql.Repositories
 {
-    [UsedImplicitly]
     public class SqlLogRepository : ILogRepository
     {
         private readonly string _tableName;
@@ -38,20 +36,15 @@ namespace Lykke.Logs.MsSql.Repositories
         {
             _tableName = logTableName;
             _connectionString = connectionString;
-            
-            using (var conn = new SqlConnection(_connectionString))
-            {
-                conn.CreateTableIfDoesntExists(CreateTableScript, _tableName);
-            }
+
+            using var conn = new SqlConnection(_connectionString);
+            conn.CreateTableIfDoesntExists(CreateTableScript, _tableName);
         }
         
         public async Task Insert(ILogEntity log)
         {
-            using (var conn = new SqlConnection(_connectionString))
-            {
-                await conn.ExecuteAsync(
-                    $"insert into {_tableName} ({GetColumns}) values ({GetFields})", log);
-            }
+            using var conn = new SqlConnection(_connectionString);
+            await conn.ExecuteAsync($"insert into {_tableName} ({GetColumns}) values ({GetFields})", log);
         }
     }
 }

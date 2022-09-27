@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Common;
 using Common.Log;
-using JetBrains.Annotations;
 using Lykke.Common.Log;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.Extensions.Logging;
@@ -11,7 +10,6 @@ using Lykke.Logs.MsSql.Interfaces;
 
 namespace Lykke.Logs.MsSql
 {
-    [UsedImplicitly]
     //TODO: to refactor and use new logs mechanism
     public class LogToSql : ILog
     {

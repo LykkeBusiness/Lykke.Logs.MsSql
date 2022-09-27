@@ -12,7 +12,8 @@ namespace Lykke.Logs.MsSql.Extensions
         /// <param name="connection"></param>
         /// <param name="createQuery"></param>
         /// <param name="tableName"></param>
-        /// <param name="schemaName">Optional. Must be set if non-dbo schema is used, in that case <paramref name="tableName"/> must contain no schema.</param>
+        /// <param name="schemaName"> Optional. Must be set if non-dbo schema is used,
+        /// in that case <paramref name="tableName"/> must contain no schema.</param>
         public static void CreateTableIfDoesntExists(this IDbConnection connection, string createQuery,
             string tableName, string schemaName = null)
         {
@@ -24,10 +25,10 @@ namespace Lykke.Logs.MsSql.Extensions
                 if (!string.IsNullOrEmpty(schemaName))
                 {
                     fullTableName = $"{schemaName}.{fullTableName}";
-                    
+
                     if (1 != connection.ExecuteScalar<int>(
-                            "SELECT 1 FROM information_schema.schemata WHERE schema_name = @schemaName", 
-                            new {schemaName}))
+                            "SELECT 1 FROM information_schema.schemata WHERE schema_name = @schemaName",
+                            new { schemaName }))
                     {
                         // Create schema
                         var query = $"CREATE SCHEMA {schemaName} AUTHORIZATION dbo";
@@ -40,7 +41,8 @@ namespace Lykke.Logs.MsSql.Extensions
             }
             //avolkov this method could be called with System.Data.SqlClient or Microsoft.Data.SqlClient
             //so we should catch both exception to be able to create table if not exist
-            catch (Exception ex) when(ex is System.Data.SqlClient.SqlException || ex is Microsoft.Data.SqlClient.SqlException)
+            catch (Exception ex) when (ex is System.Data.SqlClient.SqlException ||
+                                       ex is Microsoft.Data.SqlClient.SqlException)
             {
                 // Create table
                 var query = string.Format(createQuery, fullTableName);
