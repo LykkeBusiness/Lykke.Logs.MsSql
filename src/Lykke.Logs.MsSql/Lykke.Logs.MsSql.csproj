@@ -6,7 +6,7 @@
     <Company>Lykke Business</Company>
     <Copyright>Copyright (c) 2022 Lykke Business.</Copyright>
     <PackageId>LykkeBiz.Logs.MsSql</PackageId>
-    <Version>1.0.5</Version>
+    <Version>3.0.1</Version>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
