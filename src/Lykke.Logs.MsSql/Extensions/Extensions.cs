@@ -7,16 +7,32 @@ namespace Lykke.Logs.MsSql.Extensions
     public static class Extensions
     {
         /// <summary>
-        /// Validates that required SQL objects exists.
+        /// Validates that required SQL table exists.
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="createQuery"></param>
         /// <param name="tableName"></param>
         /// <param name="schemaName"> Optional. Must be set if non-dbo schema is used,
         /// in that case <paramref name="tableName"/> must contain no schema.</param>
+        /// <exception cref="ArgumentException">
+        /// When <paramref name="createQuery"/> is empty or doesn't contain {0} placeholder for table name.
+        /// When <paramref name="tableName"/> is empty.
+        /// </exception>
+        /// <remarks>
+        /// It is expected that <paramref name="createQuery"/> contains {0} placeholder for table name.
+        /// </remarks>
         public static void CreateTableIfDoesntExists(this IDbConnection connection, string createQuery,
             string tableName, string schemaName = null)
         {
+            if (string.IsNullOrEmpty(createQuery))
+                throw new ArgumentException($"{nameof(createQuery)} must not be empty");
+            
+            if (!createQuery.Contains("{0}"))
+                throw new ArgumentException($"{nameof(createQuery)} must contain {0} placeholder for table name");
+            
+            if (string.IsNullOrEmpty(tableName))
+                throw new ArgumentException($"{nameof(tableName)} must not be empty");
+            
             var fullTableName = tableName;
             connection.Open();
             try
