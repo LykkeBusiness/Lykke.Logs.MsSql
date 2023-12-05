@@ -25,13 +25,13 @@ namespace Lykke.Logs.MsSql.Extensions
             string tableName, string schemaName = null)
         {
             if (string.IsNullOrEmpty(createQuery))
-                throw new ArgumentException($"{nameof(createQuery)} must be not empty");
+                throw new ArgumentException($"{nameof(createQuery)} must not be empty");
             
             if (!createQuery.Contains("{0}"))
                 throw new ArgumentException($"{nameof(createQuery)} must contain {0} placeholder for table name");
             
             if (string.IsNullOrEmpty(tableName))
-                throw new ArgumentException($"{nameof(tableName)} must be not empty");
+                throw new ArgumentException($"{nameof(tableName)} must not be empty");
             
             var fullTableName = tableName;
             connection.Open();
