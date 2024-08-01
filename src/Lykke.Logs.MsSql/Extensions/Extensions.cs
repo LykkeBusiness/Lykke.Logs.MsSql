@@ -57,8 +57,7 @@ namespace Lykke.Logs.MsSql.Extensions
             }
             //avolkov this method could be called with System.Data.SqlClient or Microsoft.Data.SqlClient
             //so we should catch both exception to be able to create table if not exist
-            catch (Exception ex) when (ex is System.Data.SqlClient.SqlException ||
-                                       ex is Microsoft.Data.SqlClient.SqlException)
+            catch (Exception ex) when (ex is Microsoft.Data.SqlClient.SqlException)
             {
                 // Create table
                 var query = string.Format(createQuery, fullTableName);
